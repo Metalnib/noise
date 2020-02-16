@@ -573,7 +573,12 @@ namespace Noise
 			Debug.Assert(psks.Count == 0);
 
 			var handshakeHash = state.GetHandshakeHash();
-			var transport = new Transport<CipherType>(role == initiator, c1, c2);
+
+            Transport transport;
+            if (!protocol.OutOfOrder)
+                transport = new Transport<CipherType>(role == initiator, c1, c2);
+            else
+                transport = new OOTransport<CipherType>(role == initiator, c1, c2);
 
 			Clear();
 

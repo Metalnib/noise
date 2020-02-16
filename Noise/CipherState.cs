@@ -48,6 +48,15 @@ namespace Noise
 			n = nonce;
 		}
 
+        /// <summary>
+        /// Get nonce. This function is used for handling out-of-order transport messages.
+        /// </summary>
+        /// <returns>8-byte unsigned integer Nonce</returns>
+        public ulong GetNonce()
+        {
+			return n;
+        }
+
 		/// <summary>
 		/// If k is non-empty returns ENCRYPT(k, n++, ad, plaintext).
 		/// Otherwise copies the plaintext to the ciphertext parameter
@@ -65,7 +74,7 @@ namespace Noise
 				plaintext.CopyTo(ciphertext);
 				return plaintext.Length;
 			}
-
+			
 			return cipher.Encrypt(k, n++, ad, plaintext, ciphertext);
 		}
 
@@ -87,7 +96,7 @@ namespace Noise
 				ciphertext.CopyTo(plaintext);
 				return ciphertext.Length;
 			}
-
+			
 			int bytesRead = cipher.Decrypt(k, n, ad, ciphertext, plaintext);
 			++n;
 

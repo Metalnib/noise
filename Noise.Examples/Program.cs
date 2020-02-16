@@ -17,7 +17,8 @@ namespace Noise.Examples
 			HandshakePattern.IK,
 			CipherFunction.ChaChaPoly,
 			HashFunction.Blake2b,
-			PatternModifiers.Psk2
+			PatternModifiers.Psk2, 
+            true //testing OutOfOrder transport
 		);
 
 		private static readonly List<string> messages = new List<string>

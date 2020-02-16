@@ -48,25 +48,27 @@ namespace Noise
 		{
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Protocol"/> class.
-		/// </summary>
-		/// <param name="handshakePattern">The handshake pattern (e.q. NX or IK).</param>
-		/// <param name="cipher">The cipher function (AESGCM or ChaChaPoly).</param>
-		/// <param name="hash">The hash function (SHA256, SHA512, BLAKE2s, or BLAKE2b).</param>
-		/// <param name="modifiers">The combination of pattern modifiers (e.q. empty, psk0, or psk1+psk2).</param>
-		/// <exception cref="ArgumentNullException">
-		/// Thrown if either <paramref name="handshakePattern"/>,
-		/// <paramref name="cipher"/>, or <paramref name="hash"/> is null.
-		/// </exception>
-		/// <exception cref="ArgumentException">
-		/// Thrown if <paramref name="modifiers"/> does not represent a valid combination of pattern modifiers.
-		/// </exception>
-		public Protocol(
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Protocol"/> class.
+        /// </summary>
+        /// <param name="handshakePattern">The handshake pattern (e.q. NX or IK).</param>
+        /// <param name="cipher">The cipher function (AESGCM or ChaChaPoly).</param>
+        /// <param name="hash">The hash function (SHA256, SHA512, BLAKE2s, or BLAKE2b).</param>
+        /// <param name="modifiers">The combination of pattern modifiers (e.q. empty, psk0, or psk1+psk2).</param>
+        /// <param name="outOfOrder">Out of Order Packets flag, true for communication channels like UDP.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if either <paramref name="handshakePattern"/>,
+        /// <paramref name="cipher"/>, or <paramref name="hash"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown if <paramref name="modifiers"/> does not represent a valid combination of pattern modifiers.
+        /// </exception>
+        public Protocol(
 			HandshakePattern handshakePattern,
 			CipherFunction cipher,
 			HashFunction hash,
-			PatternModifiers modifiers = PatternModifiers.None)
+			PatternModifiers modifiers = PatternModifiers.None,
+            bool outOfOrder = false)
 		{
 			Exceptions.ThrowIfNull(handshakePattern, nameof(handshakePattern));
 			Exceptions.ThrowIfNull(cipher, nameof(cipher));
@@ -77,6 +79,7 @@ namespace Noise
 			Dh = DhFunction.Curve25519;
 			Hash = hash;
 			Modifiers = modifiers;
+            OutOfOrder = outOfOrder;
 
 			Name = GetName();
 		}
@@ -106,7 +109,13 @@ namespace Noise
 		/// </summary>
 		public PatternModifiers Modifiers { get; }
 
-		internal byte[] Name { get; }
+        /// <summary>
+        /// Gets Out of Order Packets flag, true for communication channels like UDP.
+        /// It specify Transport class behavior and non auto CipherState's nonce
+        /// </summary>
+        public bool OutOfOrder { get; }
+
+        internal byte[] Name { get; }
 
 		/// <summary>
 		/// Creates an initial <see cref="HandshakeState"/>.
